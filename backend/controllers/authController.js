@@ -1,5 +1,5 @@
-import ErrorHandler from "../Middlewares/errorMiddlewares.js";
-import { catchAsyncError } from "../Middlewares/catchAsyncError.js";
+import ErrorHandler from "../middlewares/errorMiddlewares.js";
+import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import { User } from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
@@ -89,6 +89,28 @@ export const verifyOtp = catchAsyncError(async (req, res, next) => {
   }
 });
 
-export const login = catchAsyncError(async (req, res, next) =>{})
+export const login = catchAsyncError(async (req, res, next) =>{
+  const {email, password} = req.body || {};
+  if(!email || !password){
+    return next(new ErrorHandler("Please enter all fields", 400));
+  }
+  const user = await User.findOne({email,accountVerified:true}).select("+password");
+  if(!user){
+    return next(new ErrorHandler("User not found", 400));
+  }
+  const isPasswordMatched = await bcrypt.compare(password, user.password);
+  if(!isPasswordMatched){
+    return next(new ErrorHandler("email or password is incorrect", 400));
+  }
+  sendToken(user, 200, "User Login Successfully", res);
+})
 
-export const logout = catchAsyncError(async (req, res, next) =>{})
+export const logout = catchAsyncError(async (req, res, next) =>{
+  res.status(200).cookie("token", "", {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  }).json({
+    success: true,
+    message: "User Logged Out Successfully",
+  });
+})
