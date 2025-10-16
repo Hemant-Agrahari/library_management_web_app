@@ -163,24 +163,40 @@ export const forgotPassword = catchAsyncError(async (req, res, next) => {
   }
 });
 export const resetPassword = catchAsyncError(async (req, res, next) => {
-  const {token} = req.params || {};
+  const { token } = req.params || {};
   const { password, confirmPassword } = req.body || {};
-  const resetPasswordToken = crypto.createHash("sha256").update(token).digest("hex");
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
   const user = await User.findOne({
     resetPasswordToken,
     resetPasswordExpires: { $gt: Date.now() },
   });
-  if(!password || !confirmPassword){
-    return next(new ErrorHandler("Password and confirm password are required", 400));
+  if (!password || !confirmPassword) {
+    return next(
+      new ErrorHandler("Password and confirm password are required", 400)
+    );
   }
-  if(!user){
-    return next(new ErrorHandler("Reset password token is invalid or expired", 400));
+  if (!user) {
+    return next(
+      new ErrorHandler("Reset password token is invalid or expired", 400)
+    );
   }
-  if(password !== confirmPassword){
-    return next(new ErrorHandler("Password and confirm password do not match", 400));
+  if (password !== confirmPassword) {
+    return next(
+      new ErrorHandler("Password and confirm password do not match", 400)
+    );
   }
-  if(password.length < 6 || password.length > 16 || confirmPassword.length < 6 || confirmPassword.length > 16){
-    return next(new ErrorHandler("Password must be between 6 and 16 characters", 400));
+  if (
+    password.length < 6 ||
+    password.length > 16 ||
+    confirmPassword.length < 6 ||
+    confirmPassword.length > 16
+  ) {
+    return next(
+      new ErrorHandler("Password must be between 6 and 16 characters", 400)
+    );
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   user.password = hashedPassword;
@@ -188,4 +204,39 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
   user.resetPasswordExpires = undefined;
   await user.save({ validateBeforeSave: false });
   sendToken(user, 200, "Password reset successfully", res);
+});
+
+export const updatePassword = catchAsyncError(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select("+password");
+  const { currentPassword, newPassword, confirmPassword } = req.body || {};
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    return next(new ErrorHandler("Please enter all fields", 400));
+  }
+  // const isPasswordMatched = await bcrypt.compare(currentPassword, user.password);
+  if (newPassword !== confirmPassword) {
+    return next(
+      new ErrorHandler("Password and confirm password do not match", 400)
+    );
+  }
+  if (
+    newPassword.length < 6 ||
+    newPassword.length > 16 ||
+    confirmPassword.length < 6 ||
+    confirmPassword.length > 16
+  ) {
+    return next(
+      new ErrorHandler("Password must be between 6 and 16 characters", 400)
+    );
+  }
+  const isPasswordMatched = await bcrypt.compare(currentPassword, user.password);
+  if(!isPasswordMatched){
+    return next(new ErrorHandler("Current password is incorrect", 400));
+  }
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  user.password = hashedPassword;
+  await user.save({ validateBeforeSave: false });
+  res.status(200).json({
+    success: true,
+    message: "Password updated successfully",
+  });
 });
