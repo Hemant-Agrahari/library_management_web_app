@@ -5,7 +5,8 @@ export const app = express();
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { connectDB } from './database/db.js';
-import { errorMiddleware } from './Middlewares/errorMiddlewares.js';
+import { errorMiddleware } from './middlewares/errorMiddlewares.js';
+import bookRoutes from './routes/bookRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 connectDB();
 /*
@@ -30,5 +31,5 @@ app.use(express.json());
 */
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1/auth', authRoutes);
-
+app.use('/api/v1/book', bookRoutes);
 app.use(errorMiddleware);

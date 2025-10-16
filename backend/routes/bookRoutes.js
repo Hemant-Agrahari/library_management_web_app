@@ -7,3 +7,4 @@ router.post("/admin/add-book", isAuthenticated, authorized("Admin"), addBook);
 router.get("/all",isAuthenticated, getAllBooks);
 router.delete("/delete-book/:id", isAuthenticated, authorized("Admin"), deleteBook);
 
+export default router;
