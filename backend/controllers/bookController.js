@@ -1,8 +1,6 @@
 import { catchAsyncError } from "../middlewares/catchAsyncError.js";
 import { Book } from "../models/bookModel.js";
-import { User } from "../models/userModel.js";
 import ErrorHandler from "../middlewares/errorMiddlewares.js";
-import { isAuthenticated } from "../middlewares/authMiddlesWare.js";
 
 export const addBook = catchAsyncError(async (req, res, next) => {
   const { title, author, description, price, quantity } = req.body || {};

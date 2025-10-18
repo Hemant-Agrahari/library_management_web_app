@@ -8,6 +8,7 @@ import { connectDB } from './database/db.js';
 import { errorMiddleware } from './middlewares/errorMiddlewares.js';
 import bookRoutes from './routes/bookRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import borrowRoutes from './routes/borrowRouter.js';
 connectDB();
 /*
     This is a middleware that allows the request to be made from the frontend to the backend
@@ -32,4 +33,5 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/book', bookRoutes);
+app.use('/api/v1/borrow', borrowRoutes);
 app.use(errorMiddleware);
