@@ -182,7 +182,7 @@ export const otpVerification = (email, otp) => async (dispatch) => {
 };
 
 export const login = (data) => async (dispatch) => {
-  dispatch(authSlice.actions.loginRequestRequest());
+  dispatch(authSlice.actions.loginRequest());
   await axios
     .post("http://localhost:4000/api/v1/auth/login", data, {
       withCredentials: true,
@@ -283,3 +283,5 @@ export const updatePassword = (data) => async (dispatch) => {
       );
     });
 };
+
+export default authSlice.reducer;

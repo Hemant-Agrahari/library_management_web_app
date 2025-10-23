@@ -4,7 +4,8 @@ import Home from './pages/Home';
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import OTP from "./pages/OTP";
-import ResetPassword from "./pages/ResetPassword"
+import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 import ToastContainer from 'react-toastify'
 
 const App = () => {
