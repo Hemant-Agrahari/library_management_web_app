@@ -99,8 +99,20 @@ export const returnBorrowedBook = catchAsyncError(async (req, res, next) => {
 });
 
 export const borrowBook = catchAsyncError(async (req, res, next) => {
-  
+  const borrowedBooks = req.user.borrowedBook.filter(book => !book.returned);
+  res.status(200).json({
+    success: true,
+    message: "Borrowed books fetched successfully",
+    borrowedBooks,
+  });
 });
 export const getBorrowedBooksForAdmin = catchAsyncError(
-  async (req, res, next) => {}
+  async (req, res, next) => {
+    const borrowedBooks = await Borrow.find();
+    res.status(200).json({
+      success: true,
+      message: "Borrowed books fetched successfully",
+      borrowedBooks,
+    });
+  }
 );
