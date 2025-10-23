@@ -8,7 +8,7 @@ import { connectDB } from './database/db.js';
 import { errorMiddleware } from './middlewares/errorMiddlewares.js';
 import bookRoutes from './routes/bookRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import borrowRoutes from './routes/borrowRouter.js';
+import borrowRoutes from './routes/borrowRoutes.js';
 connectDB();
 /*
     This is a middleware that allows the request to be made from the frontend to the backend
