@@ -9,6 +9,8 @@ import { errorMiddleware } from './middlewares/errorMiddlewares.js';
 import bookRoutes from './routes/bookRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import borrowRoutes from './routes/borrowRoutes.js';
+import expressFileUpload from 'express-fileupload';
+import userRoutes from './routes/userRouter.js';
 connectDB();
 /*
     This is a middleware that allows the request to be made from the frontend to the backend
@@ -31,7 +33,12 @@ app.use(express.json());
     This is a middleware that parses the urlencoded data and makes it available in the req.body object
 */
 app.use(express.urlencoded({ extended: true }));
+app.use(expressFileUpload({
+    useTempFiles: true,
+    tempFileDir: '/tmp/',
+}));
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/book', bookRoutes);
 app.use('/api/v1/borrow', borrowRoutes);
+app.use('/api/v1/user', userRoutes);
 app.use(errorMiddleware);
