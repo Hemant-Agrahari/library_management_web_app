@@ -11,7 +11,11 @@ import authRoutes from './routes/authRoutes.js';
 import borrowRoutes from './routes/borrowRoutes.js';
 import expressFileUpload from 'express-fileupload';
 import userRoutes from './routes/userRouter.js';
+import { notifyUsers } from './services/notifyUsers.js';
+import { removeUnverifiedAccount } from './services/removeUnverifiedAccount.js';
 connectDB();
+notifyUsers();
+removeUnverifiedAccount()
 /*
     This is a middleware that allows the request to be made from the frontend to the backend
 */
