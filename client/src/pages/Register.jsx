@@ -4,25 +4,57 @@ import logo_with_title from "../assets/logo-with-title.png";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { register, resetAuthSlice } from "../store/slices/authSlice";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const { loading, error, message, user, isAuthenticated } = useSelector(
+  const { loading, error, message,isAuthenticated } = useSelector(
     (state) => state.auth
   );
   const navigate = useNavigate();
-  const handleRegister = (e) => {
-    e.preventDefault();
-    const data = new FormData();
-    data.append("name", name);
-    data.append("email", email);
-    data.append("password", password);
-    dispatch(register(data));
-  };
+
+  // Formik validation schema
+  const validationSchema = Yup.object({
+    name: Yup.string()
+      .required("Full name is required")
+      .min(2, "Name must be at least 2 characters")
+      .max(50, "Name must not exceed 50 characters")
+      .matches(/^[a-zA-Z\s]+$/, "Name must contain only letters and spaces"),
+    email: Yup.string()
+      .required("Email is required")
+      .email("Invalid email address")
+      .matches(
+        /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        "Please enter a valid email address"
+      ),
+    password: Yup.string()
+      .required("Password is required")
+      .min(8, "Password must be at least 8 characters")
+      .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+        "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      ),
+  });
+
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      const data = new FormData();
+      data.append("name", values.name);
+      data.append("email", values.email);
+      data.append("password", values.password);
+      dispatch(register(data));
+    },
+  });
+
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -30,105 +62,18 @@ const Register = () => {
     }
     if (message) {
       toast.success(message);
-      navigate(`/otp-verification/${email}`);
+      navigate(`/otp-verification/${formik.values.email}`);
     }
-  }, [dispatch, error, isAuthenticated, loading]);
+  }, [dispatch, error, isAuthenticated, loading, message, navigate]);
 
   if (isAuthenticated) {
     return <Navigate to="/" />;
   }
   return (
     <>
-      {/* <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-          
-          <div className="text-center">
-            <img src={logo} alt="logo" className="w-16 h-16 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900">Create Account</h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Sign up to get started
-            </p>
-          </div>
-
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Full Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your full name"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Enter your email"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Create a password"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {loading ? "Creating Account..." : "Sign Up"}
-            </button>
-          </form>
-
-          <p className="text-center text-sm text-gray-600">
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              Login
-            </Link>
-          </p>
-        </div>
-      </div> */}
-
       <div className="flex flex-col justify-center md:flex-row  h-screen">
         {/* left side */}
-        <div className="hidden w-full md:w-1/2 bg-black text-white md:flex flex-col items-center justify-center p-8 rounded-tr-[80px] rounded-br-[80ox]">
+        <div className="hidden w-full md:w-1/2 bg-black text-white md:flex flex-col items-center justify-center p-8 rounded-tr-[80px] rounded-br-[80px]">
           <div className="text-center h-[376px]">
             <div className="flex justify-center mb-12">
               <img
@@ -138,7 +83,7 @@ const Register = () => {
               />
             </div>
             <p className="text-gray-300 mb-12">
-              Already have an account?Sign in to your account{" "}
+              Already have an account? Sign in to your account{" "}
             </p>
             <Link
               to="/login"
@@ -159,42 +104,75 @@ const Register = () => {
                 <img
                   src={logo}
                   alt="logo"
-                  className="w-24 h-24 object-conver"
+                  className="w-24 h-24 object-cover"
                 />
               </div>
             </div>
-            <p className="text-gray-800 text-center mb-12 ">
+            <p className="text-gray-800 text-center mb-12">
               Please fill in the form to create an account
             </p>
-            <form onSubmit={handleRegister} className="">
+            <form onSubmit={formik.handleSubmit}>
               <div className="mb-2">
                 <input
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  name="name"
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   placeholder="Enter your full name"
-                  className="w-full px-4 py-3 border border-black rounded-md focus:outline-none"
+                  className={`w-full px-4 py-3 border rounded-md focus:outline-none ${
+                    formik.touched.name && formik.errors.name
+                      ? "border-red-500"
+                      : "border-black"
+                  }`}
                 />
+                {formik.touched.name && formik.errors.name && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.name}
+                  </p>
+                )}
               </div>
               <div className="mb-2">
                 <input
-                  type="text"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  name="email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   placeholder="Enter your email"
-                  className="w-full px-4 py-3 border border-black rounded-md focus:outline-none"
+                  className={`w-full px-4 py-3 border rounded-md focus:outline-none ${
+                    formik.touched.email && formik.errors.email
+                      ? "border-red-500"
+                      : "border-black"
+                  }`}
                 />
+                {formik.touched.email && formik.errors.email && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.email}
+                  </p>
+                )}
               </div>
               <div className="mb-2">
                 <input
-                  type="text"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  type="password"
+                  name="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   placeholder="Enter your password"
-                  className="w-full px-4 py-3 border border-black rounded-md focus:outline-none"
+                  className={`w-full px-4 py-3 border rounded-md focus:outline-none ${
+                    formik.touched.password && formik.errors.password
+                      ? "border-red-500"
+                      : "border-black"
+                  }`}
                 />
+                {formik.touched.password && formik.errors.password && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.password}
+                  </p>
+                )}
               </div>
-              <button type="submit" disabled={loading} className="w-full px-4 py-3 bg-black text-white rounded-md focus:outline-none border-2 hover:bg-white hover:text-black transition transition-all duration-300">{loading ? "Creating Account..." : "Sign Up"}</button>
+              <button type="submit" disabled={loading || !formik.isValid} className="w-full px-4 py-3 bg-black text-white rounded-md focus:outline-none border-2 border-black hover:bg-white hover:text-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">{loading ? "Creating Account..." : "Sign Up"}</button>
               <div className="block md:hidden font-semibold mt-5">
                 <p>Already have an account? <Link to="/login" className="">Login</Link></p>
               </div>

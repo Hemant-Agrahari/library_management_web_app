@@ -1,24 +1,40 @@
 import React from "react";
 import logo from "../assets/black-logo.png";
 import logo_with_title from "../assets/logo-with-title.png";
-import { useParams, useNavigate, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { otpVerification, resetAuthSlice } from "../store/slices/authSlice";
 import { toast } from "react-toastify";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 const OTP = () => {
   const { email } = useParams();
-  const [otp, setOtp] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error, message, isAuthenticated } = useSelector(
     (state) => state.auth
   );
 
-  const handleOtpVerification = (e) => {
-    e.preventDefault();
-    dispatch(otpVerification(email, otp));
-  };
+  // Formik validation schema
+  const validationSchema = Yup.object({
+    otp: Yup.string()
+      .required("OTP is required")
+      .matches(/^[0-9]+$/, "OTP must contain only numbers")
+      .min(4, "OTP must be at least 4 digits")
+      .max(6, "OTP must not exceed 6 digits"),
+  });
+
+  // Formik form handling
+  const formik = useFormik({
+    initialValues: {
+      otp: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      dispatch(otpVerification(email, values.otp));
+    },
+  });
 
   useEffect(() => {
     if (error) {
@@ -59,21 +75,31 @@ const OTP = () => {
               Enter the code sent to your email
             </p>
             <p className="text-gray-600 text-center mb-8 text-sm">{email}</p>
-            <form onSubmit={handleOtpVerification}>
+            <form onSubmit={formik.handleSubmit}>
               <div className="mb-4">
                 <input
                   type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
+                  name="otp"
+                  value={formik.values.otp}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   placeholder="Enter the code"
-                  required
-                  className="w-full px-4 py-3 border border-black rounded-md focus:outline-none"
+                  className={`w-full px-4 py-3 border rounded-md focus:outline-none ${
+                    formik.touched.otp && formik.errors.otp
+                      ? "border-red-500"
+                      : "border-black"
+                  }`}
                 />
+                {formik.touched.otp && formik.errors.otp && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {formik.errors.otp}
+                  </p>
+                )}
               </div>
               <button
                 type="submit"
-                disabled={loading}
-                className="w-full px-4 py-3 bg-black text-white rounded-md focus:outline-none border-2 border-black hover:bg-white hover:text-black transition-all duration-300"
+                disabled={loading || !formik.isValid}
+                className="w-full px-4 py-3 bg-black text-white rounded-md focus:outline-none border-2 border-black hover:bg-white hover:text-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Verifying OTP..." : "Verify OTP"}
               </button>
