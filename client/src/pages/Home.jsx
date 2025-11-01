@@ -9,15 +9,16 @@ import BookManagement from "../components/BookManagement";
 import Catalog from "../components/Catalog";
 import Users from "../components/Users";
 import MyBorrowedBooks from "../components/MyBorrowedBooks";
+import Header from "../layout/Header";
 const Home = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState("");
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   
 
-  // if (!isAuthenticated) {
-  //   return <Navigate to="/login" />;
-  // }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <div className="relative md:pl-64 flex flex-col min-h-screen bg-gray-100">
