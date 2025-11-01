@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { otpVerification, resetAuthSlice } from "../store/slices/authSlice";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
+import { Navigate } from "react-router-dom";
 import * as Yup from "yup";
 const OTP = () => {
   const { email } = useParams();
@@ -43,9 +44,14 @@ const OTP = () => {
     }
     if (message) {
       toast.success(message);
+      dispatch(resetAuthSlice());
       navigate("/login");
     }
   }, [dispatch, error, isAuthenticated, loading, message, navigate]);
+
+  if (isAuthenticated) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <>

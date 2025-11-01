@@ -56,14 +56,16 @@ const Register = () => {
   });
 
   useEffect(() => {
+    if (message) {
+      toast.success(message);
+      dispatch(resetAuthSlice());
+      navigate(`/otp-verification/${formik.values.email}`);
+    }
     if (error) {
       toast.error(error);
       dispatch(resetAuthSlice());
     }
-    if (message) {
-      toast.success(message);
-      navigate(`/otp-verification/${formik.values.email}`);
-    }
+    
   }, [dispatch, error, isAuthenticated, loading, message, navigate]);
 
   if (isAuthenticated) {
