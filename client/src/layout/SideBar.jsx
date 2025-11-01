@@ -62,7 +62,7 @@ const SideBar = ({ isSidebarOpen, setIsSidebarOpen, setSelectedComponent }) => {
 
         <button
           className="w-full py-2 font-medium text-white bg-transparent rounded-md hover:cursor-pointer flex items-center gap-2"
-          onClick={() => setSelectedComponent("Book")}
+          onClick={() => setSelectedComponent("Books")}
         >
           <img src={bookIcon} alt="dashboard" />
           <span>Books</span>
@@ -76,13 +76,13 @@ const SideBar = ({ isSidebarOpen, setIsSidebarOpen, setSelectedComponent }) => {
               <img src={catalogIcon} alt="dashboard" />
               <span>Catalog</span>
             </button>
-            <button
-              className="w-full py-2 font-medium text-white bg-transparent rounded-md hover:cursor-pointer flex items-center gap-2"
-              onClick={() => setSelectedComponent("Book")}
-            >
-              <img src={usersIcon} alt="dashboard" />
-              <span>Users</span>
-            </button>
+        <button
+          className="w-full py-2 font-medium text-white bg-transparent rounded-md hover:cursor-pointer flex items-center gap-2"
+          onClick={() => setSelectedComponent("Users")}
+        >
+          <img src={usersIcon} alt="dashboard" />
+          <span>Users</span>
+        </button>
             <button className="w-full py-2 font-medium text-white bg-transparent rounded-md hover:cursor-pointer flex items-center space-x-2" onClick={() => dispatch(toggleAddNewAdminPopup())}>
              
               <RiAdminFill className="w-5 h-5" /> <span >Add New Admin</span>

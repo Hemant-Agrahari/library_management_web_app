@@ -2,7 +2,7 @@ import React from "react";
 import { BookA, NotebookPen } from "lucide-react";
 
 const BookManagement = () => {
-  return <></>;
+  return <>Book Management</>;
 };
 
 export default BookManagement;
