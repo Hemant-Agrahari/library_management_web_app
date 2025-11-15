@@ -86,7 +86,7 @@ const Login = () => {
             <div className="flex justify-center mb-12">
               <div className="flex flex-col-reverse sm:flex-row items-center justify-center gap-5">
                 <h3 className="font-medium text-4xl overflow-hidden">
-                  Sign up
+               Login
                 </h3>
                 <img
                   src={logo}

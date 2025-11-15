@@ -15,10 +15,11 @@ import { toast } from "react-toastify";
 import { resetAuthSlice } from "../store/slices/authSlice";
 import { toggleAddNewAdminPopup, toggleSettingPopup } from "../store/slices/popUpSlice";
 import AddNewAdmin from "../popups/AddNewAdmin";
+import SettingPopup from "../popups/SettingPopup";
 const SideBar = ({ isSidebarOpen, setIsSidebarOpen, setSelectedComponent }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { addNewAdminPopup } = useSelector((state) => state.popUp);
+  const { addNewAdminPopup, settingPopup } = useSelector((state) => state.popUp);
   const { loading, error, message, user, isAuthenticated } = useSelector(
     (state) => state.auth
   );
@@ -116,6 +117,7 @@ const SideBar = ({ isSidebarOpen, setIsSidebarOpen, setSelectedComponent }) => {
       <img src={closeIcon} alt="close" className="h-fit w-fit absolute top-0 right-4 cursor-pointer mt-4 block md:hidden" onClick={() => setIsSidebarOpen(false)} />
     </aside>
     {addNewAdminPopup && <AddNewAdmin />}
+    {settingPopup && <SettingPopup />}
     </>
   );
 };

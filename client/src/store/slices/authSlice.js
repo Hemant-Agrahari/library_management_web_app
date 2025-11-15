@@ -268,7 +268,7 @@ export const resetPassword = (data,token) => async (dispatch) => {
 export const updatePassword = (data) => async (dispatch) => {
   dispatch(authSlice.actions.updatePasswordRequest());
   await axios
-    .post(`http://localhost:4000/api/v1/auth/update-password`, {data}, {
+    .put(`http://localhost:4000/api/v1/auth/update-password`, data, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { getUserRequest } from "./authSlice";
+import { closeAllPopups } from "./popUpSlice";
 const userSlice = createSlice({
     name: "user",
     initialState: {
@@ -35,9 +36,10 @@ const userSlice = createSlice({
 
 export const fetchAllUsers = () => async (dispatch) => {
     dispatch(userSlice.actions.fetchAllUsersRequest());
-    await axios.get('http://localhost:4000/api/v1/users/all-users', {
+    await axios.get('http://localhost:4000/api/v1/user/all-users', {
         withCredentials: true,
     }).then((res) => {
+        console.log(res.data.users, "res.data.users");
         dispatch(userSlice.actions.fetchAllUsersSuccess(res.data.users));
 
     }).catch((error) => {
@@ -48,13 +50,13 @@ export const fetchAllUsers = () => async (dispatch) => {
 
 export const addNewAdmin = (data) => async (dispatch) => {
     dispatch(userSlice.actions.addNewAdminRequest());
-    await axios.post('http://localhost:4000/api/v1/users/add-new-admin', data, {
-        withCredentials: true,headers: {
-            "Content-Type": "application/json",
-        },
+    await axios.post('http://localhost:4000/api/v1/user/add/register-admin', data, {
+        withCredentials: true,
     }).then((res) => {
         dispatch(userSlice.actions.addNewAdminSuccess());
         toast.success(res.data.message);
+        dispatch(fetchAllUsers());
+        dispatch(closeAllPopups());
     }).catch((error) => {
         toast.error(error.response.data.message);
         dispatch(userSlice.actions.addNewAdminFailed(error.response.data.message));
