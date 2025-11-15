@@ -90,7 +90,7 @@ const SideBar = ({ isSidebarOpen, setIsSidebarOpen, setSelectedComponent }) => {
             </button>
           </>
         )}
-        {isAuthenticated && user?.role === "User" && (
+        {isAuthenticated && user?.role === "user" && (
           <button
             className="w-full py-2 font-medium text-white bg-transparent rounded-md hover:cursor-pointer flex items-center gap-2"
             onClick={() => setSelectedComponent("My Borrowed Books")}
