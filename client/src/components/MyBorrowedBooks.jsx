@@ -44,10 +44,10 @@ const MyBorrowedBooks = () => {
   };
   const [filter, setFilter] = useState("returned");
   const returnedBooks = userBorrowedBooks.filter((book) => {
-    return book.returned === true;
+    return book.returnedDate !== null;
   });
   const nonReturnedBooks = userBorrowedBooks.filter((book) => {
-    return book.returned === false;
+    return book.returnedDate === null;
   });
   const bookToDisplay =
     filter === "returned" ? returnedBooks : nonReturnedBooks;
@@ -108,15 +108,15 @@ const MyBorrowedBooks = () => {
                     className={`${index % 2 === 0 ? "bg-gray-50" : ""}`}
                   >
                     <td className="text-left py-3 px-6">{index + 1}</td>
-                    <td className="text-left py-3 px-6">{book.bookTitle}</td>
+                    <td className="text-left py-3 px-6">{book.book}</td>
                     <td className="text-left py-3 px-6">
-                      {dateFormat(book.borrowedDate)}
+                      {dateFormat(book.borrowDate)}
                     </td>
                     <td className="text-left py-3 px-6">
                       {dateFormat(book.dueDate)}
                     </td>
                     <td className="text-left py-3 px-6">
-                      {book.returned ? "Yes" : "No"}
+                      {book.returnedDate ? "Yes" : "No"}
                     </td>
                     <td className="text-left py-3 px-6">
                       <BookA

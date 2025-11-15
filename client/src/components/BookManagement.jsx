@@ -20,10 +20,7 @@ import RecordBookPopup from "../popups/RecordBookPopup"
 
 const BookManagement = () => {
   const { books, loading, error, message } = useSelector((state) => state.book);
-  console.log(books, "books");
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-  console.log(isAuthenticated, "isAuthenticated");
-  console.log(user, "user");
   const {
     addBookPopup,
     readBookPopup,
@@ -173,7 +170,7 @@ const BookManagement = () => {
       </main>
       {addBookPopup && <AddBookPopup/>}
       {readBookPopup && <ReadBookPopup/>}
-      {recordBookPopup && <RecordBookPopup/>}
+      {recordBookPopup && <RecordBookPopup bookId={recordBook} />}
     </>
   );
 };

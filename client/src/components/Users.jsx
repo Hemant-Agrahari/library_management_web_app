@@ -3,8 +3,6 @@ import { useSelector } from "react-redux";
 import Header from "../layout/Header";
 const Users = () => {
   const { users, loading } = useSelector((state) => state.user);
-  console.log(users, "users");
-  console.log(loading, "loading");
   const dateFormat = (timeStamp) => {
     const date = new Date(timeStamp);
     const formatedDate = `${String(date.getDate()).padStart(2, "0")}/${String(

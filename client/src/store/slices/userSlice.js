@@ -39,7 +39,6 @@ export const fetchAllUsers = () => async (dispatch) => {
     await axios.get('http://localhost:4000/api/v1/user/all-users', {
         withCredentials: true,
     }).then((res) => {
-        console.log(res.data.users, "res.data.users");
         dispatch(userSlice.actions.fetchAllUsersSuccess(res.data.users));
 
     }).catch((error) => {
