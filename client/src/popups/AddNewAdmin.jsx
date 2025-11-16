@@ -5,18 +5,49 @@ import keyIcon from "../assets/key.png";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewAdmin } from "../store/slices/userSlice";
 import { toggleAddNewAdminPopup } from "../store/slices/popUpSlice";
+import { Input, PasswordInput } from "../components/common";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const AddNewAdmin = () => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.user);
   const { addNewAdminPopup } = useSelector((state) => state.popUp);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [avatar, setAvatar] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(placeHolder);
-  const [errors, setErrors] = useState({});
+
+  const validationSchema = Yup.object({
+    name: Yup.string()
+      .trim()
+      .min(2, "Name must be at least 2 characters")
+      .required("Name is required"),
+    email: Yup.string()
+      .trim()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      const data = new FormData();
+      data.append("name", values.name);
+      data.append("email", values.email);
+      data.append("password", values.password);
+      if (avatar) {
+        data.append("avatar", avatar);
+      }
+      dispatch(addNewAdmin(data));
+    },
+  });
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -30,56 +61,10 @@ const AddNewAdmin = () => {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!name.trim()) {
-      newErrors.name = "Name is required";
-    } else if (name.trim().length < 2) {
-      newErrors.name = "Name must be at least 2 characters";
-    }
-
-    if (!email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Invalid email address";
-    }
-
-    if (!password) {
-      newErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleAddNewAdmin = (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    const data = new FormData();
-    data.append("name", name);
-    data.append("email", email);
-    data.append("password", password);
-    if (avatar) {
-      data.append("avatar", avatar);
-    }
-    dispatch(addNewAdmin(data));
-  };
-
   const handleClose = () => {
-    setName("");
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
+    formik.resetForm();
     setAvatar(null);
     setAvatarPreview(placeHolder);
-    setErrors({});
     dispatch(toggleAddNewAdminPopup());
   };
 
@@ -106,7 +91,7 @@ const AddNewAdmin = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleAddNewAdmin} className="p-6">
+          <form onSubmit={formik.handleSubmit} className="p-6">
             {/* Avatar Upload */}
             <div className="flex flex-col items-center mb-6">
               <div className="relative">
@@ -140,58 +125,41 @@ const AddNewAdmin = () => {
                 Upload avatar (optional)
               </p>
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter admin name"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.name ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-              )}
-            </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter admin email"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.email ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-            </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.password ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-              )}
-            </div>
+            <Input
+              label="Name"
+              type="text"
+              name="name"
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Enter admin name"
+              error={formik.touched.name && formik.errors.name}
+              required
+            />
+
+            <Input
+              label="Email"
+              type="email"
+              name="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Enter admin email"
+              error={formik.touched.email && formik.errors.email}
+              required
+            />
+
+            <PasswordInput
+              label="Password"
+              name="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Enter password"
+              error={formik.touched.password && formik.errors.password}
+              required
+            />
             <div className="flex gap-3">
               <button
                 type="button"

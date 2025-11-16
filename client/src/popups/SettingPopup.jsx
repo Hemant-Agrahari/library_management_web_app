@@ -1,45 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import closeIcon from "../assets/close-square.png";
 import keyIcon from "../assets/key.png";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSettingPopup } from "../store/slices/popUpSlice";
 import { updatePassword, resetAuthSlice } from "../store/slices/authSlice";
+import { PasswordInput } from "../components/common";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const SettingPopup = () => {
   const dispatch = useDispatch();
   const { settingPopup } = useSelector((state) => state.popUp);
   const { loading, message, error } = useSelector((state) => state.auth);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [errors, setErrors] = useState({});
 
-  const validateForm = () => {
-    const newErrors = {};
+  const validationSchema = Yup.object({
+    currentPassword: Yup.string().required("Current password is required"),
+    newPassword: Yup.string()
+      .min(8, "Password must be at least 8 characters")
+      .required("New password is required")
+      .test(
+        "passwords-different",
+        "New password must be different from current password",
+        function (value) {
+          return value !== this.parent.currentPassword;
+        }
+      ),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("newPassword"), null], "Passwords do not match")
+      .required("Please confirm your password"),
+  });
 
-    if (!currentPassword) {
-      newErrors.currentPassword = "Current password is required";
-    }
-
-    if (!newPassword) {
-      newErrors.newPassword = "New password is required";
-    } else if (newPassword.length < 8) {
-      newErrors.newPassword = "Password must be at least 8 characters";
-    }
-
-    if (!confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (newPassword !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    if (currentPassword && newPassword && currentPassword === newPassword) {
-      newErrors.newPassword = "New password must be different from current password";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const formik = useFormik({
+    initialValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      dispatch(updatePassword(values));
+    },
+  });
 
   useEffect(() => {
     if (message) {
@@ -48,27 +49,8 @@ const SettingPopup = () => {
     }
   }, [message]);
 
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    const passwordData = {
-      currentPassword,
-      newPassword,
-      confirmPassword,
-    };
-
-    dispatch(updatePassword(passwordData));
-  };
-
   const handleClose = () => {
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
-    setErrors({});
+    formik.resetForm();
     dispatch(resetAuthSlice());
     dispatch(toggleSettingPopup());
   };
@@ -96,60 +78,40 @@ const SettingPopup = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleChangePassword} className="p-6">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Current Password <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Enter current password"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.currentPassword ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.currentPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.currentPassword}</p>
-              )}
-            </div>
+          <form onSubmit={formik.handleSubmit} className="p-6">
+            <PasswordInput
+              label="Current Password"
+              name="currentPassword"
+              value={formik.values.currentPassword}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Enter current password"
+              error={formik.touched.currentPassword && formik.errors.currentPassword}
+              required
+            />
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                New Password <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter new password"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.newPassword ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.newPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.newPassword}</p>
-              )}
-            </div>
+            <PasswordInput
+              label="New Password"
+              name="newPassword"
+              value={formik.values.newPassword}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Enter new password"
+              error={formik.touched.newPassword && formik.errors.newPassword}
+              required
+            />
 
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm new password"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.confirmPassword ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.confirmPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
-              )}
-            </div>
+            <PasswordInput
+              label="Confirm Password"
+              name="confirmPassword"
+              value={formik.values.confirmPassword}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Confirm new password"
+              error={formik.touched.confirmPassword && formik.errors.confirmPassword}
+              required
+              className="mb-2"
+            />
 
             {error && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">

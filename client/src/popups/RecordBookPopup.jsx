@@ -1,30 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import closeIcon from "../assets/close-square.png";
 import bookIcon from "../assets/book.png";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleRecordBookPopup } from "../store/slices/popUpSlice";
 import { recordBorrowedBook } from "../store/slices/borrowSlice";
 import { toast } from "react-toastify";
+import { Input } from "../components/common";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const RecordBookPopup = ({ bookId }) => {
   const dispatch = useDispatch();
   const { recordBookPopup } = useSelector((state) => state.popUp);
   const { loading, message } = useSelector((state) => state.borrow);
-  const [email, setEmail] = useState("");
-  const [errors, setErrors] = useState({});
 
-  const validateForm = () => {
-    const newErrors = {};
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .trim()
+      .email("Please enter a valid email address")
+      .required("Email is required"),
+  });
 
-    if (!email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = "Please enter a valid email address";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      if (!bookId) {
+        toast.error("Book ID is missing");
+        return;
+      }
+      dispatch(recordBorrowedBook(values.email, bookId));
+    },
+  });
 
   // Close popup when operation is successful
   useEffect(() => {
@@ -33,24 +42,8 @@ const RecordBookPopup = ({ bookId }) => {
     }
   }, [message]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    if (!bookId) {
-      toast.error("Book ID is missing");
-      return;
-    }
-
-    dispatch(recordBorrowedBook(email, bookId));
-  };
-
   const handleClose = () => {
-    setEmail("");
-    setErrors({});
+    formik.resetForm();
     dispatch(toggleRecordBookPopup());
   };
 
@@ -77,25 +70,20 @@ const RecordBookPopup = ({ bookId }) => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6">
+          <form onSubmit={formik.handleSubmit} className="p-6">
             {/* Email */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email address"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.email ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-            </div>
+            <Input
+              label="Email"
+              type="email"
+              name="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Enter email address"
+              error={formik.touched.email && formik.errors.email}
+              required
+              className="mb-2"
+            />
 
             {/* Buttons */}
             <div className="flex gap-3">
