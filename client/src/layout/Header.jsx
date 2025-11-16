@@ -26,7 +26,7 @@ const Header = () => {
   }, []);
   return (
     <>
-      <header className="absolute top-0 left-0 bg-white py-4 px-6 shadow-md flex justify-between items-center w-full">
+      <header className="fixed top-0 left-0 bg-white py-4 px-6 shadow-md flex justify-between items-center w-full">
         <div className="flex items-center gap-2">
           <img src={userIcon} alt="logo" className="w-8 h-8" />
           <div className="flex flex-col">
@@ -34,7 +34,7 @@ const Header = () => {
             <span className="text-sm font-medium sm:text-lg lg:text-xl sm:font-medium">{user && user.role}</span>
           </div>
         </div>
-        <div className="hidden md:flex item-center gap-2">
+        <div className="hidden md:flex item-center gap-2 fixed right-6 top-4 sm:top-4">
           <div className="flex flex-col text-sm lg:text-base items-end font-semibold">
             <span>{currentTime}</span>
             <span>{currentDate}</span>

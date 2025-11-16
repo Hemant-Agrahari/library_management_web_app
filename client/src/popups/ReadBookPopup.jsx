@@ -42,7 +42,7 @@ const ReadBookPopup = ({ book }) => {
                       Title
                     </label>
                     <p className="text-lg font-semibold text-gray-900">
-                      {book.bookTitle || "N/A"}
+                      {book.title || "N/A"}
                     </p>
                   </div>
                 </div>
@@ -59,7 +59,7 @@ const ReadBookPopup = ({ book }) => {
                       Author
                     </label>
                     <p className="text-lg text-gray-900">
-                      {book.bookId.author}
+                      {book.author || "N/A"}
                     </p>
                   </div>
                 </div>
@@ -76,7 +76,7 @@ const ReadBookPopup = ({ book }) => {
                       Description
                     </label>
                     <p className="text-base text-gray-700 leading-relaxed">
-                      {book.bookId.description ||
+                      {book.description ||
                         "No description available for this book."}
                     </p>
                   </div>

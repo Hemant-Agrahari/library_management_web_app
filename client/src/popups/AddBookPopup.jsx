@@ -1,84 +1,58 @@
-import React, { useState } from "react";
+import React from "react";
 import closeIcon from "../assets/close-square.png";
 import bookIcon from "../assets/book.png";
 import { useDispatch, useSelector } from "react-redux";
 import { addBook } from "../store/slices/bookSlice";
 import { toggleAddBookPopup } from "../store/slices/popUpSlice";
-import { fetchAllBooks } from "../store/slices/bookSlice";
+import { Input } from "../components/common";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const AddBookPopup = () => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.book);
   const { addBookPopup } = useSelector((state) => state.popUp);
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [description, setDescription] = useState("");
-  const [errors, setErrors] = useState({});
 
-  const validateForm = () => {
-    const newErrors = {};
+  const validationSchema = Yup.object({
+    title: Yup.string()
+      .trim()
+      .min(2, "Title must be at least 2 characters")
+      .required("Title is required"),
+    author: Yup.string()
+      .trim()
+      .min(2, "Author must be at least 2 characters")
+      .required("Author is required"),
+    price: Yup.number()
+      .positive("Price must be a positive number")
+      .required("Price is required"),
+    quantity: Yup.number()
+      .integer("Quantity must be a positive integer")
+      .positive("Quantity must be a positive integer")
+      .required("Quantity is required"),
+    description: Yup.string()
+      .trim()
+      .min(10, "Description must be at least 10 characters")
+      .required("Description is required"),
+  });
 
-    if (!title.trim()) {
-      newErrors.title = "Title is required";
-    } else if (title.trim().length < 2) {
-      newErrors.title = "Title must be at least 2 characters";
-    }
-
-    if (!author.trim()) {
-      newErrors.author = "Author is required";
-    } else if (author.trim().length < 2) {
-      newErrors.author = "Author must be at least 2 characters";
-    }
-
-    if (!price.trim()) {
-      newErrors.price = "Price is required";
-    } else if (isNaN(price) || parseFloat(price) <= 0) {
-      newErrors.price = "Price must be a positive number";
-    }
-
-    if (!quantity.trim()) {
-      newErrors.quantity = "Quantity is required";
-    } else if (!Number.isInteger(Number(quantity)) || parseInt(quantity) <= 0) {
-      newErrors.quantity = "Quantity must be a positive integer";
-    }
-
-    if (!description.trim()) {
-      newErrors.description = "Description is required";
-    } else if (description.trim().length < 10) {
-      newErrors.description = "Description must be at least 10 characters";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleAddBook = (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
-    const bookData = {
-      title,
-      author,
-      price,
-      quantity,
-      description,
-    };
-    dispatch(addBook(bookData));
-    dispatch(toggleAddBookPopup());
-  };
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      author: "",
+      price: "",
+      quantity: "",
+      description: "",
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      dispatch(addBook(values));
+      dispatch(toggleAddBookPopup());
+      formik.resetForm();
+    },
+  });
 
   const handleClose = () => {
-    setTitle("");
-    setAuthor("");
-    setPrice("");
-    setQuantity("");
-    setDescription("");
-    setErrors({});
+    formik.resetForm();
     dispatch(toggleAddBookPopup());
   };
 
@@ -105,105 +79,77 @@ const AddBookPopup = () => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleAddBook} className="p-6">
+          <form onSubmit={formik.handleSubmit} className="p-6">
             {/* Title */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Title <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter book title"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.title ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.title && (
-                <p className="text-red-500 text-sm mt-1">{errors.title}</p>
-              )}
-            </div>
+            <Input
+              label="Title"
+              type="text"
+              name="title"
+              value={formik.values.title}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Enter book title"
+              error={formik.touched.title && formik.errors.title}
+              required
+            />
 
             {/* Author */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Author <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
-                placeholder="Enter author name"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                  errors.author ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.author && (
-                <p className="text-red-500 text-sm mt-1">{errors.author}</p>
-              )}
-            </div>
+            <Input
+              label="Author"
+              type="text"
+              name="author"
+              value={formik.values.author}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Enter author name"
+              error={formik.touched.author && formik.errors.author}
+              required
+            />
 
             {/* Price and Quantity Row */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-2 gap-4">
               {/* Price */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Price <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                  placeholder="0.00"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                    errors.price ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                {errors.price && (
-                  <p className="text-red-500 text-sm mt-1">{errors.price}</p>
-                )}
-              </div>
+              <Input
+                label="Price"
+                type="number"
+                step="0.01"
+                name="price"
+                value={formik.values.price}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                placeholder="0.00"
+                error={formik.touched.price && formik.errors.price}
+                required
+              />
 
               {/* Quantity */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Quantity <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
-                  placeholder="0"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition ${
-                    errors.quantity ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                {errors.quantity && (
-                  <p className="text-red-500 text-sm mt-1">{errors.quantity}</p>
-                )}
-              </div>
+              <Input
+                label="Quantity"
+                type="number"
+                name="quantity"
+                value={formik.values.quantity}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                placeholder="0"
+                error={formik.touched.quantity && formik.errors.quantity}
+                required
+              />
             </div>
 
             {/* Description */}
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter book description"
-                rows="4"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition resize-none ${
-                  errors.description ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              {errors.description && (
-                <p className="text-red-500 text-sm mt-1">{errors.description}</p>
-              )}
-            </div>
+            <Input
+              label="Description"
+              type="textarea"
+              name="description"
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              placeholder="Enter book description"
+              rows={4}
+              error={formik.touched.description && formik.errors.description}
+              required
+              className="mb-2"
+            />
 
             {/* Buttons */}
             <div className="flex gap-3">

@@ -42,7 +42,6 @@ const AdminDashboard = () => {
   const { settingPopup } = useSelector((state) => state.popUp);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalAdmin, setTotalAdmin] = useState(0);
-  console.log(totalAdmin,"total admin");
   const [totalBooks, setTotalBooks] = useState((books && books.length) || 0);
   const [totalBorrowedBooks, setTotalBorrowedBooks] = useState(0);
   const [totalReturnedBooks, setTotalReturnedBooks] = useState(0);
@@ -96,8 +95,6 @@ const AdminDashboard = () => {
   };
 
   const { user } = useSelector((state) => state.auth);
-  console.log(user);
-
   return (
     <>
       <main className="relative flex-1 p-6 pt-28 bg-gray-50 min-h-screen">

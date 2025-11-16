@@ -169,7 +169,7 @@ const BookManagement = () => {
         )}
       </main>
       {addBookPopup && <AddBookPopup/>}
-      {readBookPopup && <ReadBookPopup/>}
+      {readBookPopup && <ReadBookPopup book={readBook}/>}
       {recordBookPopup && <RecordBookPopup bookId={recordBook} />}
     </>
   );

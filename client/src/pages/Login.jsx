@@ -70,13 +70,13 @@ const Login = () => {
               />
             </div>
             <p className="text-gray-300 mb-12">
-              Already have an account? Sign in to your account{" "}
+              Don't have an account? Create your account{" "}
             </p>
             <Link
-              to="/login"
+              to="/register"
               className="border-2 rounded-lg font-semibold border-white px-8 py-2 hover:bg-white hover:text-black transition"
             >
-              Login
+              Register
             </Link>
           </div>
         </div>
@@ -139,10 +139,10 @@ const Login = () => {
                   </p>
                 )}
               </div>
-              <button type="submit" disabled={loading} className="w-full px-4 py-3 bg-black text-white rounded-md focus:outline-none border-2 border-black hover:bg-white hover:text-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">{loading ? "Creating Account..." : "Sign Up"}</button>
+              <button type="submit" disabled={loading} className="w-full px-4 py-3 bg-black text-white rounded-md focus:outline-none border-2 border-black hover:bg-white hover:text-black transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">{loading ? "Logging in..." : "Login"}</button>
               <Link to="/forgot-password" className="text-sm text-black-500 mt-6  font-bold hover:text-black-700 transition-all duration-300">Forgot Password?</Link>
-              <div className="block md:hidden font-semibold mt-5">
-                <p>Don't have an account? <Link to="/register" className="">Register</Link></p>
+              <div className="text-center font-semibold mt-5">
+                <p className="text-gray-600">Don't have an account? <Link to="/register" className="text-black hover:underline">Register here</Link></p>
               </div>
             </form>
           </div>
