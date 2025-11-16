@@ -36,7 +36,7 @@ const userSlice = createSlice({
 
 export const fetchAllUsers = () => async (dispatch) => {
     dispatch(userSlice.actions.fetchAllUsersRequest());
-    await axios.get('http://localhost:4000/api/v1/user/all-users', {
+    await axios.get(`${import.meta.env.VITE_API_BASE_URL}/user/all-users`, {
         withCredentials: true,
     }).then((res) => {
         dispatch(userSlice.actions.fetchAllUsersSuccess(res.data.users));
@@ -49,7 +49,7 @@ export const fetchAllUsers = () => async (dispatch) => {
 
 export const addNewAdmin = (data) => async (dispatch) => {
     dispatch(userSlice.actions.addNewAdminRequest());
-    await axios.post('http://localhost:4000/api/v1/user/add/register-admin', data, {
+    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/user/add/register-admin`, data, {
         withCredentials: true,
     }).then((res) => {
         dispatch(userSlice.actions.addNewAdminSuccess());
