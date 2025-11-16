@@ -8,7 +8,7 @@ import { Input } from "../components/common";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const AddBookPopup = () => {
+const AddBookModal = () => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.book);
   const { addBookPopup } = useSelector((state) => state.popUp);
@@ -175,4 +175,4 @@ const AddBookPopup = () => {
   );
 };
 
-export default AddBookPopup;
+export default AddBookModal;

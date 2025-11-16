@@ -14,9 +14,9 @@ import {
 } from "../store/slices/popUpSlice";
 import { toast } from "react-toastify";
 import Header from "../layout/Header";
-import AddBookPopup from "../popups/AddBookPopup";
-import ReadBookPopup from "../popups/ReadBookPopup";
-import RecordBookPopup from "../popups/RecordBookPopup"
+import AddBookPopup from "../modals/AddBookModal";
+import ReadBookPopup from "../modals/ReadBookModal";
+import RecordBookPopup from "../modals/RecordBookModal"
 
 const BookManagement = () => {
   const { books, loading, error, message } = useSelector((state) => state.book);
@@ -87,7 +87,7 @@ const BookManagement = () => {
 
   return (
     <>
-      <main className="relative flex-1 p-6 pt-28">
+      <main className="relative flex-1 pt-28">
         <Header />
         <header className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
           <h2 className="text-xl font-medium md:text-2xl md:font-semibold">

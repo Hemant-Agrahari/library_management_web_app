@@ -3,7 +3,7 @@ import { X, BookOpen, User, FileText } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { toggleReadBookPopup } from "../store/slices/popUpSlice";
 
-const ReadBookPopup = ({ book }) => {
+const ReadBookModal = ({ book }) => {
   const dispatch = useDispatch();
 
   const handleClose = () => {
@@ -136,4 +136,4 @@ const ReadBookPopup = ({ book }) => {
   );
 };
 
-export default ReadBookPopup;
+export default ReadBookModal;

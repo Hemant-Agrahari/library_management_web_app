@@ -2,16 +2,16 @@ import React, { useEffect } from "react";
 import closeIcon from "../assets/close-square.png";
 import bookIcon from "../assets/book.png";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleReturnBookPopup } from "../store/slices/popUpSlice";
-import { returnBorrowedBook } from "../store/slices/borrowSlice";
+import { toggleRecordBookPopup } from "../store/slices/popUpSlice";
+import { recordBorrowedBook } from "../store/slices/borrowSlice";
 import { toast } from "react-toastify";
 import { Input } from "../components/common";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const ReturnBookPopup = ({ book, email: initialEmail }) => {
+const RecordBookModal = ({ bookId }) => {
   const dispatch = useDispatch();
-  const { returnBookPopup } = useSelector((state) => state.popUp);
+  const { recordBookPopup } = useSelector((state) => state.popUp);
   const { loading, message } = useSelector((state) => state.borrow);
 
   const validationSchema = Yup.object({
@@ -23,16 +23,15 @@ const ReturnBookPopup = ({ book, email: initialEmail }) => {
 
   const formik = useFormik({
     initialValues: {
-      email: initialEmail || "",
+      email: "",
     },
     validationSchema,
-    enableReinitialize: true,
     onSubmit: (values) => {
-      if (!book) {
+      if (!bookId) {
         toast.error("Book ID is missing");
         return;
       }
-      dispatch(returnBorrowedBook(values.email, book));
+      dispatch(recordBorrowedBook(values.email, bookId));
     },
   });
 
@@ -45,10 +44,10 @@ const ReturnBookPopup = ({ book, email: initialEmail }) => {
 
   const handleClose = () => {
     formik.resetForm();
-    dispatch(toggleReturnBookPopup());
+    dispatch(toggleRecordBookPopup());
   };
 
-  if (!returnBookPopup) return null;
+  if (!recordBookPopup) return null;
 
   return (
     <>
@@ -59,7 +58,7 @@ const ReturnBookPopup = ({ book, email: initialEmail }) => {
             <div className="flex items-center gap-3">
               <img src={bookIcon} alt="book icon" className="w-6 h-6" />
               <h3 className="text-xl font-semibold text-gray-800">
-                Return Borrowed Book
+                Record Book
               </h3>
             </div>
             <img
@@ -83,7 +82,6 @@ const ReturnBookPopup = ({ book, email: initialEmail }) => {
               placeholder="Enter email address"
               error={formik.touched.email && formik.errors.email}
               required
-              disabled={true}
               className="mb-2"
             />
 
@@ -101,7 +99,7 @@ const ReturnBookPopup = ({ book, email: initialEmail }) => {
                 disabled={loading}
                 className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "Returning..." : "Return Borrowed Book"}
+                {loading ? "Recording..." : "Record Book"}
               </button>
             </div>
           </form>
@@ -111,4 +109,4 @@ const ReturnBookPopup = ({ book, email: initialEmail }) => {
   );
 };
 
-export default ReturnBookPopup;
+export default RecordBookModal;

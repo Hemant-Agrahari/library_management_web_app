@@ -9,7 +9,7 @@ import { Input, PasswordInput } from "../components/common";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
-const AddNewAdmin = () => {
+const AddNewAdminModal = () => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.user);
   const { addNewAdminPopup } = useSelector((state) => state.popUp);
@@ -183,4 +183,4 @@ const AddNewAdmin = () => {
   );
 };
 
-export default AddNewAdmin;
+export default AddNewAdminModal;

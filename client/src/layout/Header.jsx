@@ -26,7 +26,7 @@ const Header = () => {
   }, []);
   return (
     <>
-      <header className="fixed top-0 left-0 bg-white py-4 px-6 shadow-md flex justify-between items-center w-full">
+      <header className="fixed top-0  bg-white py-4 px-6 shadow-md flex justify-between items-center w-full">
         <div className="flex items-center gap-2">
           <img src={userIcon} alt="logo" className="w-8 h-8" />
           <div className="flex flex-col">

@@ -82,7 +82,7 @@ const UserDashboard = () => {
 
   return (
     <>
-      <main className="relative flex-1 p-6 pt-28 bg-gray-50">
+      <main className="relative flex-1 pt-28 bg-gray-50">
         <Header />
         <div className="flex flex-col xl:flex-row gap-8 xl:gap-12 min-h-[85vh]">
           {/* Left Section - Action Cards */}

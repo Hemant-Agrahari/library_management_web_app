@@ -14,8 +14,8 @@ import { logout } from "../store/slices/authSlice";
 import { toast } from "react-toastify";
 import { resetAuthSlice } from "../store/slices/authSlice";
 import { toggleAddNewAdminPopup, toggleSettingPopup } from "../store/slices/popUpSlice";
-import AddNewAdmin from "../popups/AddNewAdmin";
-import SettingPopup from "../popups/SettingPopup";
+import AddNewAdminModal from "../modals/AddNewAdminModal";
+import SettingModal from "../modals/SettingModal";
 const SideBar = ({ isSidebarOpen, setIsSidebarOpen, setSelectedComponent }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -116,8 +116,8 @@ const SideBar = ({ isSidebarOpen, setIsSidebarOpen, setSelectedComponent }) => {
       </div>
       <img src={closeIcon} alt="close" className="h-fit w-fit absolute top-0 right-4 cursor-pointer mt-4 block md:hidden" onClick={() => setIsSidebarOpen(false)} />
     </aside>
-    {addNewAdminPopup && <AddNewAdmin />}
-    {settingPopup && <SettingPopup />}
+    {addNewAdminPopup && <AddNewAdminModal />}
+    {settingPopup && <SettingModal />}
     </>
   );
 };

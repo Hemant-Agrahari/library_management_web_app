@@ -8,7 +8,7 @@ import { fetchAllBorrowedBooks, fetchUserBorrowedBooks } from "../store/slices/b
 import { fetchAllBooks } from "../store/slices/bookSlice";
 import { resetBorrowSlice } from "../store/slices/borrowSlice";
 import { useState } from "react";
-import ReturnBookPopup from "../popups/ReturnBookPopup";
+import ReturnBookModal from "../modals/ReturnBookModal";
 import Header from "../layout/Header";
 import { BookA } from "lucide-react";
 import { toggleReadBookPopup } from "../store/slices/popUpSlice";
@@ -82,7 +82,7 @@ const Catalog = () => {
   }, [dispatch, message, error,loading]);
   return (
   <>
-    <main className="relative flex-1 p-6 pt-28">
+    <main className="relative flex-1 pt-28">
         <Header />
         <header className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
           <h2 className="text-xl font-medium md:text-2xl md:font-semibold">
@@ -165,7 +165,7 @@ const Catalog = () => {
           </table>
         </div>
       </main>
-      {returnBookPopup && <ReturnBookPopup book={borrowedBook} email={email} />}
+      {returnBookPopup && <ReturnBookModal book={borrowedBook} email={email} />}
   </>
   );
 };

@@ -17,7 +17,7 @@ const Users = () => {
 
   return (
     <>
-      <main className="relative flex-1 p-6 pt-28">
+      <main className="relative flex-1 pt-28">
        <Header/>
        <header className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
         <h2 className="text-xl font-medium md:text-2xl md:font-semibold">Registered Users</h2>
