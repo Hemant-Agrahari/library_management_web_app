@@ -21,7 +21,7 @@ const App = () => {
   useEffect(() => {
     dispatch(getUserRequest());
     dispatch(fetchAllBooks());
-    if (isAuthenticated && user.role === "Admin") {
+    if (isAuthenticated && user.role === "admin") {
       dispatch(fetchAllUsers());
       dispatch(fetchAllBorrowedBooks());
     }

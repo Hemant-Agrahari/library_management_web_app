@@ -68,7 +68,7 @@ const SideBar = ({ isSidebarOpen, setIsSidebarOpen, setSelectedComponent }) => {
           <img src={bookIcon} alt="dashboard" />
           <span>Books</span>
         </button>
-        {isAuthenticated && user?.role === "Admin" && (
+        {isAuthenticated && user?.role === "admin" && (
           <>
             <button
               className="w-full py-2 font-medium text-white bg-transparent rounded-md hover:cursor-pointer flex items-center gap-2"

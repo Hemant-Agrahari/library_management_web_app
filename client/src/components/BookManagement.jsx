@@ -91,10 +91,10 @@ const BookManagement = () => {
         <Header />
         <header className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
           <h2 className="text-xl font-medium md:text-2xl md:font-semibold">
-            {user?.role === "Admin" ? "Book Management" : "My Borrowed Books"}
+            {user?.role === "admin" ? "Book Management" : "My Borrowed Books"}
           </h2>
           <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
-            {isAuthenticated && user?.role === "Admin" && (
+            {isAuthenticated && user?.role === "admin" && (
               <button
                 className="relative pl-14 w-full sm:w-52 flex gap-4 justify-center items-center py-2 px-4 bg-black text-white rounded-md hover:bg-gray-800"
                 onClick={() => dispatch(toggleAddBookPopup())}
@@ -123,12 +123,12 @@ const BookManagement = () => {
                   <th className="text-left py-3 px-6">Id</th>
                   <th className="text-left py-3 px-6">Name</th>
                   <th className="text-left py-3 px-6">Author</th>
-                  {isAuthenticated && user?.role === "Admin" && (
+                  {isAuthenticated && user?.role === "admin" && (
                     <th className="text-left py-3 px-6">Quantity</th>
                   )}
                   <th className="text-left py-3 px-6">Availability</th>
                   <th className="text-left py-3 px-6">Price</th>
-                  {isAuthenticated && user?.role === "Admin" && (
+                  {isAuthenticated && user?.role === "admin" && (
                     <th className="text-left py-3 px-6">Record Book</th>
                   )}
                 </tr>
@@ -142,14 +142,14 @@ const BookManagement = () => {
                     <td className="text-left py-3 px-6">{index + 1}</td>
                     <td className="text-left py-3 px-6">{book.title}</td>
                     <td className="text-left py-3 px-6">{book.author}</td>
-                    {isAuthenticated && user?.role === "Admin" && (
+                    {isAuthenticated && user?.role === "admin" && (
                       <td className="text-left py-3 px-6">{book.quantity}</td>
                     )}
                     <td className="text-left py-3 px-6">
                       {book.availability ? "Available" : "Not Available"}
                     </td>
                     <td className="text-left py-3 px-6">{`$${book.price}`}</td>
-                    {isAuthenticated && user?.role === "Admin" && (
+                    {isAuthenticated && user?.role === "admin" && (
                       <td className="px-4 py-2 flex space-x-2 my-3 justify-center">
                         <BookA
                           className="w-5 h-5 text-blue-500"

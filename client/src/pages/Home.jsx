@@ -37,7 +37,7 @@ const Home = () => {
       {(() => {
         switch (selectedComponent) {
           case "Dashboard":
-            return user.role === "User" ? (
+            return user.role === "user" ? (
               <UserDashboard />
             ) : (
               <AdminDashboard />
@@ -47,12 +47,12 @@ const Home = () => {
             return <BookManagement />;
             break;
           case "Catalog":
-            if (user.role === "Admin") {
+            if (user.role === "admin") {
               return <Catalog />;
             }
             break;
             case "Users":
-              if (user.role === "Admin") {
+              if (user.role === "admin") {
                 return <Users />;
               }
               break;
@@ -60,7 +60,7 @@ const Home = () => {
               return <MyBorrowedBooks />;
               break;
           default:
-            return user?.role === "User" ? <UserDashboard /> : <AdminDashboard />;
+            return user?.role === "user" ? <UserDashboard /> : <AdminDashboard />;
             break;
         }
       })()}
