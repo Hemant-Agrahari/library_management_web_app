@@ -20,6 +20,7 @@ import logo from "../assets/black-logo.png";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import Header from "../layout/Header";
+import { fetchAllUsers } from "../store/slices/userSlice";
 
 ChartJS.register(
   CategoryScale,
@@ -34,15 +35,21 @@ ChartJS.register(
 );
 
 const AdminDashboard = () => {
+  const dispatch = useDispatch();
   const { users } = useSelector((state) => state.user);
   const { books } = useSelector((state) => state.book);
   const { allBorrowedBooks } = useSelector((state) => state.borrow);
   const { settingPopup } = useSelector((state) => state.popUp);
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalAdmin, setTotalAdmin] = useState(0);
+  console.log(totalAdmin,"total admin");
   const [totalBooks, setTotalBooks] = useState((books && books.length) || 0);
   const [totalBorrowedBooks, setTotalBorrowedBooks] = useState(0);
   const [totalReturnedBooks, setTotalReturnedBooks] = useState(0);
+
+  useEffect(() => {
+    dispatch(fetchAllUsers());
+  }, [dispatch]);
 
   useEffect(() => {
     let numberOfUsers = users.filter((user) => user.role === "user");
@@ -89,6 +96,7 @@ const AdminDashboard = () => {
   };
 
   const { user } = useSelector((state) => state.auth);
+  console.log(user);
 
   return (
     <>
