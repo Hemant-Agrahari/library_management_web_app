@@ -13,10 +13,24 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_CLIENT_SECRET,
 });
 export const getAllUser = catchAsyncError(async (req, res, next) => {
-  const users = await User.find({ accountVerified: true });
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const totalUsers = await User.countDocuments({ accountVerified: true });
+  const users = await User.find({ accountVerified: true }).skip(skip).limit(limit);
+  
   res.status(200).json({
     success: true,
     users,
+    pagination: {
+      currentPage: page,
+      totalPages: Math.ceil(totalUsers / limit),
+      totalUsers,
+      limit,
+      hasNextPage: page < Math.ceil(totalUsers / limit),
+      hasPrevPage: page > 1
+    }
   });
 });
 
